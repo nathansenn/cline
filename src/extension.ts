@@ -55,6 +55,20 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const webview = (await initialize(context)) as VscodeWebviewProvider
 
+	// Start protobus gRPC service for external orchestration
+	// This allows external tools (like Claude Code orchestrator) to interact with Cline
+	const enableProtobusService = context.globalState.get<boolean>("cline.enableProtobusService", false)
+	if (enableProtobusService) {
+		try {
+			const { startProtobusService } = await import("../standalone/protobus-service")
+			const address = await startProtobusService(webview.controller)
+			Logger.log(`Protobus gRPC service started at ${address}`)
+		} catch (error: any) {
+			Logger.log(`Failed to start protobus service: ${error.message}`)
+			// Continue without protobus service - it's optional
+		}
+	}
+
 	Logger.log("Cline extension activated")
 
 	const testModeWatchers = await initializeTestMode(webview)

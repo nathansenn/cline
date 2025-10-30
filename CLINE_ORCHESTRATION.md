@@ -2,14 +2,23 @@
 
 ## Overview
 
-This repository now includes a powerful orchestration system that allows **Claude Code to monitor and supervise Cline's execution** in real-time. Claude Code acts as an intelligent supervisor that:
+This repository now includes a powerful orchestration system that allows **Claude Code to monitor and supervise Cline's execution** in real-time. The system can operate in two modes:
 
+### Monitor Mode (Manual)
+Claude Code acts as an intelligent supervisor that:
 - **Monitors** Cline's runtime state and chat output
 - **Analyzes** what Cline is doing and determines if intervention is needed
 - **Recommends** appropriate responses or actions
 - **Generates** context-aware prompts for human review
 
-Think of it as having Claude Code watch over Cline's shoulder, ready to step in and help when needed.
+### Autonomous Mode (Automatic) 🤖✨
+Claude Code fully automates the supervision:
+- **Monitors** Cline's runtime state continuously
+- **Analyzes** and makes decisions automatically
+- **Responds** directly to Cline via gRPC (no manual intervention!)
+- **Logs** all decisions for review
+
+Think of it as having Claude Code watch over Cline's shoulder, ready to step in and help - or even respond automatically!
 
 ## Why Use This?
 
@@ -116,6 +125,49 @@ npx ts-node --project scripts/tsconfig.json scripts/orchestrate-cline.ts --outpu
 # Custom check interval
 ./scripts/watch-and-orchestrate.sh --interval=5000
 ```
+
+### 4. gRPC Client (`scripts/cline-grpc-client.ts`) 🔌
+
+**Purpose**: Sends responses directly to Cline via gRPC
+
+**Usage**:
+```bash
+# Send a text message
+npx ts-node --project scripts/tsconfig.json scripts/cline-grpc-client.ts "Yes, please continue"
+
+# Send a "Yes" button click
+npx ts-node --project scripts/tsconfig.json scripts/cline-grpc-client.ts --yes
+
+# Send a "No" button click
+npx ts-node --project scripts/tsconfig.json scripts/cline-grpc-client.ts --no
+```
+
+**Requirements**:
+- Cline must have protobus service enabled (see [Interaction Guide](scripts/INTERACTION_GUIDE.md))
+
+### 5. Autonomous Orchestrator (`scripts/autonomous-orchestrator.ts`) 🤖
+
+**Purpose**: Fully autonomous supervision with automatic responses
+
+**Usage**:
+```bash
+# Run with high confidence threshold (safest)
+npx ts-node --project scripts/tsconfig.json scripts/autonomous-orchestrator.ts
+
+# Allow medium confidence responses
+npx ts-node --project scripts/tsconfig.json scripts/autonomous-orchestrator.ts --confidence=medium
+
+# Monitor only, no auto-response
+npx ts-node --project scripts/tsconfig.json scripts/autonomous-orchestrator.ts --no-grpc
+```
+
+**What it does**:
+- Monitors Cline continuously
+- Makes decisions automatically
+- Sends responses via gRPC when confidence is high enough
+- Logs every decision for review
+
+**Safety**: Uses confidence thresholds (high/medium/low) to ensure only appropriate responses are auto-sent
 
 ## How It Works
 
@@ -406,10 +458,18 @@ Potential improvements (contributions welcome!):
 
 ## Documentation
 
-- **[Quick Start Guide](scripts/QUICK_START.md)** - Get started in 5 minutes
-- **[Full Documentation](scripts/ORCHESTRATION_README.md)** - Complete reference
-- **[Monitor Script](scripts/monitor-cline.ts)** - Source code
-- **[Orchestrator Script](scripts/orchestrate-cline.ts)** - Source code
+### Getting Started
+- **[Quick Start Guide](scripts/QUICK_START.md)** - Get started in 5 minutes (manual mode)
+- **[Interaction Guide](scripts/INTERACTION_GUIDE.md)** - Enable autonomous mode with gRPC
+
+### Reference
+- **[Full Documentation](scripts/ORCHESTRATION_README.md)** - Complete technical reference
+
+### Source Code
+- **[Monitor Script](scripts/monitor-cline.ts)** - Read Cline's state
+- **[Orchestrator Script](scripts/orchestrate-cline.ts)** - Decision-making logic
+- **[gRPC Client](scripts/cline-grpc-client.ts)** - Send responses to Cline
+- **[Autonomous Orchestrator](scripts/autonomous-orchestrator.ts)** - Fully automated supervision
 - **[Watch Script](scripts/watch-and-orchestrate.sh)** - Wrapper script
 
 ## Contributing
