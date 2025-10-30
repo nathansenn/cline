@@ -2,13 +2,8 @@
 
 ## 3.35.0
 
-### Minor Changes
-
 - 8da38b2: added zai-glm-4.6 as a Cerebras model
 - 5a3416f: This PR introduces a Python gRPC codegen flow analogous to the existing Go flow
-
-### Patch Changes
-
 - 545ac29: Created GPT5 family specific system prompt template
 - 19f74ca: Telemtry change: collect domain of openai compatible endpoints when telemetry is enabled
 - c90e64e: Requesty base URL, and API key fixes
